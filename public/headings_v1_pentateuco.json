@@ -1,0 +1,139 @@
+{
+  "GEN": {
+    "1": [
+      { "from": 1, "to": 2, "title": { "pt": "Criação: início", "en": "Creation: the beginning" } },
+      { "from": 3, "to": 5, "title": { "pt": "Haja luz", "en": "Let there be light" } },
+      { "from": 6, "to": 8, "title": { "pt": "Firmamento", "en": "The firmament" } },
+      { "from": 9, "to": 13, "title": { "pt": "Terra e mares", "en": "Land and seas" } },
+      { "from": 14, "to": 19, "title": { "pt": "Luminares", "en": "Lights in the heavens" } },
+      { "from": 20, "to": 23, "title": { "pt": "Peixes e aves", "en": "Sea and sky creatures" } },
+      { "from": 24, "to": 31, "title": { "pt": "Animais e o homem", "en": "Land animals and mankind" } }
+    ],
+    "2": [
+      { "from": 1, "to": 3, "title": { "pt": "O sétimo dia", "en": "The seventh day" } },
+      { "from": 4, "to": 17, "title": { "pt": "O jardim do Éden", "en": "The garden of Eden" } },
+      { "from": 18, "to": 25, "title": { "pt": "A criação da mulher", "en": "The creation of woman" } }
+    ],
+    "3": [
+      { "from": 1, "to": 7, "title": { "pt": "A tentação", "en": "The temptation" } },
+      { "from": 8, "to": 13, "title": { "pt": "A queda", "en": "The fall" } },
+      { "from": 14, "to": 24, "title": { "pt": "Consequências", "en": "Consequences" } }
+    ],
+    "4": [
+      { "from": 1, "to": 16, "title": { "pt": "Caim e Abel", "en": "Cain and Abel" } },
+      { "from": 17, "to": 26, "title": { "pt": "Descendência de Caim", "en": "Cain’s descendants" } }
+    ],
+    "5": [
+      { "from": 1, "to": 32, "title": { "pt": "Genealogia de Adão", "en": "Genealogy from Adam" } }
+    ],
+    "6": [
+      { "from": 1, "to": 8, "title": { "pt": "A corrupção da humanidade", "en": "Wickedness of mankind" } },
+      { "from": 9, "to": 22, "title": { "pt": "Noé e a arca", "en": "Noah and the ark" } }
+    ],
+    "7": [
+      { "from": 1, "to": 24, "title": { "pt": "O dilúvio", "en": "The flood" } }
+    ],
+    "8": [
+      { "from": 1, "to": 14, "title": { "pt": "As águas baixam", "en": "The waters abate" } },
+      { "from": 15, "to": 22, "title": { "pt": "Saída da arca", "en": "Leaving the ark" } }
+    ],
+    "9": [
+      { "from": 1, "to": 17, "title": { "pt": "Aliança com Noé", "en": "God’s covenant with Noah" } },
+      { "from": 18, "to": 29, "title": { "pt": "Noé e seus filhos", "en": "Noah and his sons" } }
+    ],
+    "10": [
+      { "from": 1, "to": 32, "title": { "pt": "Tabela das nações", "en": "The table of nations" } }
+    ],
+    "11": [
+      { "from": 1, "to": 9, "title": { "pt": "Torre de Babel", "en": "The tower of Babel" } },
+      { "from": 10, "to": 32, "title": { "pt": "Descendência de Sem", "en": "The generations of Shem" } }
+    ],
+    "12": [
+      { "from": 1, "to": 9, "title": { "pt": "Chamado de Abrão", "en": "The call of Abram" } },
+      { "from": 10, "to": 20, "title": { "pt": "Abrão no Egito", "en": "Abram in Egypt" } }
+    ]
+  },
+
+  "EXO": {
+    "1": [
+      { "from": 1, "to": 7, "title": { "pt": "Israel no Egito", "en": "Israel in Egypt" } },
+      { "from": 8, "to": 22, "title": { "pt": "Opressão e decreto", "en": "Oppression and decree" } }
+    ],
+    "2": [
+      { "from": 1, "to": 10, "title": { "pt": "Nascimento de Moisés", "en": "Birth of Moses" } },
+      { "from": 11, "to": 22, "title": { "pt": "Fuga para Midiã", "en": "Flight to Midian" } },
+      { "from": 23, "to": 25, "title": { "pt": "Clamor do povo", "en": "The people cry out" } }
+    ],
+    "3": [
+      { "from": 1, "to": 12, "title": { "pt": "A sarça ardente", "en": "The burning bush" } },
+      { "from": 13, "to": 22, "title": { "pt": "O nome do Senhor", "en": "The name of the LORD" } }
+    ],
+    "4": [
+      { "from": 1, "to": 17, "title": { "pt": "Sinais e missão", "en": "Signs and commission" } },
+      { "from": 18, "to": 31, "title": { "pt": "Moisés volta ao Egito", "en": "Moses returns to Egypt" } }
+    ],
+    "5": [
+      { "from": 1, "to": 23, "title": { "pt": "Faraó endurece", "en": "Pharaoh increases oppression" } }
+    ]
+  },
+
+  "LEV": {
+    "1": [
+      { "from": 1, "to": 17, "title": { "pt": "Oferta queimada", "en": "Burnt offering" } }
+    ],
+    "2": [
+      { "from": 1, "to": 16, "title": { "pt": "Oferta de cereais", "en": "Grain offering" } }
+    ],
+    "3": [
+      { "from": 1, "to": 17, "title": { "pt": "Oferta pacífica", "en": "Peace offering" } }
+    ],
+    "4": [
+      { "from": 1, "to": 35, "title": { "pt": "Oferta pelo pecado", "en": "Sin offering" } }
+    ],
+    "5": [
+      { "from": 1, "to": 19, "title": { "pt": "Culpa e reparação", "en": "Trespass offering" } }
+    ]
+  },
+
+  "NUM": {
+    "1": [
+      { "from": 1, "to": 54, "title": { "pt": "Censo de Israel", "en": "Census of Israel" } }
+    ],
+    "2": [
+      { "from": 1, "to": 34, "title": { "pt": "Ordem no acampamento", "en": "Camp arrangement" } }
+    ],
+    "3": [
+      { "from": 1, "to": 51, "title": { "pt": "Levi e serviço", "en": "Levites and service" } }
+    ],
+    "4": [
+      { "from": 1, "to": 49, "title": { "pt": "Funções dos levitas", "en": "Duties of the Levites" } }
+    ],
+    "5": [
+      { "from": 1, "to": 10, "title": { "pt": "Pureza no acampamento", "en": "Purity in the camp" } },
+      { "from": 11, "to": 31, "title": { "pt": "Lei de ciúmes", "en": "The law of jealousy" } }
+    ]
+  },
+
+  "DEU": {
+    "1": [
+      { "from": 1, "to": 18, "title": { "pt": "Liderança e juízes", "en": "Leaders and judges" } },
+      { "from": 19, "to": 46, "title": { "pt": "Jornada até Cades", "en": "Journey to Kadesh" } }
+    ],
+    "2": [
+      { "from": 1, "to": 25, "title": { "pt": "Peregrinação no deserto", "en": "Wilderness wandering" } },
+      { "from": 26, "to": 37, "title": { "pt": "Vitórias iniciais", "en": "Early victories" } }
+    ],
+    "3": [
+      { "from": 1, "to": 11, "title": { "pt": "Vitória sobre Ogue", "en": "Victory over Og" } },
+      { "from": 12, "to": 29, "title": { "pt": "Terras a leste", "en": "Lands east of Jordan" } }
+    ],
+    "4": [
+      { "from": 1, "to": 40, "title": { "pt": "Exortação à obediência", "en": "Exhortation to obey" } },
+      { "from": 41, "to": 49, "title": { "pt": "Cidades de refúgio", "en": "Cities of refuge" } }
+    ],
+    "5": [
+      { "from": 1, "to": 22, "title": { "pt": "Os Dez Mandamentos", "en": "The Ten Commandments" } },
+      { "from": 23, "to": 33, "title": { "pt": "Temor e aliança", "en": "Fear and covenant" } }
+    ]
+  }
+}
