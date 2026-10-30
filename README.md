@@ -6,11 +6,12 @@ Extensão para Google Chrome que permite ler a Bíblia Sagrada diretamente no na
 
 ## ✨ Funcionalidades
 
-- 📚 Acesso completo à Bíblia em **Português** e **Inglês**
+- 📚 Bíblia completa em **Português** (Almeida JFA e Bíblia Livre) e **Inglês** (KJV)
 - ⚡ Navegação rápida entre livros e capítulos
-- 💾 Salva o último capítulo lido automaticamente
-- 🌐 Integração com a [Bible API](https://bible-api.com)
-- 🎨 Interface limpa e minimalista
+- 💾 Salva o último capítulo lido e a versão escolhida
+- 🖍️ Marcação de versículos por cor e cópia formatada
+- 🌗 Tema claro/escuro e três tamanhos de fonte
+- 🌐 Dados via [Bible API](https://bible-api.com) e [getBible](https://getbible.net)
 
 ---
 
@@ -21,8 +22,9 @@ Extensão para Google Chrome que permite ler a Bíblia Sagrada diretamente no na
 | TypeScript | Lógica da extensão |
 | Vite | Build e bundling |
 | Chrome Extension Manifest V3 | API da extensão |
-| Bible API | Dados bíblicos |
-| LocalStorage | Persistência local |
+| Bible API e getBible | Dados bíblicos |
+| chrome.storage.local | Preferências, última leitura e marcações |
+| IndexedDB | Cache das respostas das APIs |
 
 ---
 
@@ -58,15 +60,15 @@ Extensão para Google Chrome que permite ler a Bíblia Sagrada diretamente no na
 bible-extension/
 ├── src/
 │   ├── popup/          # Interface da extensão
-│   │   ├── pages/      # Páginas (livros, capítulos, versículos)
-│   │   ├── api/        # Integração com Bible API
-│   │   ├── domain/     # Regras de domínio
-│   │   ├── storage/    # Persistência local
-│   │   ├── router.ts   # Roteamento entre páginas
-│   │   ├── state.ts    # Gerenciamento de estado
+│   │   ├── pages/      # Páginas (livros, capítulos, leitura)
+│   │   ├── router.ts   # Estado de navegação entre páginas
+│   │   ├── state.ts    # Preferências e última leitura
 │   │   └── ui.ts       # Componentes de UI
-│   └── background/     # Service worker
-├── icons/              # Ícones da extensão
+│   └── lib/
+│       ├── api/        # Clientes das APIs de Bíblia
+│       ├── domain/     # Cânon (livros, capítulos, nomes) e títulos de seção
+│       └── storage/    # chrome.storage e cache em IndexedDB
+├── public/             # Ícones e dados estáticos copiados para dist/
 ├── manifest.json       # Manifesto da extensão (MV3)
 ├── vite.config.ts      # Configuração do Vite
 └── tsconfig.json       # Configuração do TypeScript
@@ -86,8 +88,20 @@ npm run preview  # Preview do build
 
 ## 🔑 Permissões necessárias
 
-- `storage` — Para salvar preferências e último capítulo lido
-- `https://bible-api.com/*` — Acesso à API de versículos
+- `storage` — Para salvar preferências, último capítulo lido e marcações
+- `https://bible-api.com/*` — Almeida (JFA) e KJV
+- `https://api.getbible.net/*` — Bíblia Livre
+
+---
+
+## 📚 Fontes e licenças
+
+Os textos vêm embutidos no pacote (`public/data/<versão>/<LIVRO>.json`), gerados por `npm run fetch-bibles` a partir do [getBible](https://getbible.net). A leitura funciona offline; as APIs só são usadas como reserva se um arquivo falhar.
+
+- **Bíblia Livre**: Creative Commons Atribuição 3.0 Brasil (CC BY 3.0 BR) — [biblialivre](http://sites.google.com/site/biblialivre). A atribuição é obrigatória. No Salmo 46 o versículo 3 está incorporado ao 2 na própria fonte.
+- **Almeida (JFA)**: edição de 1911 (reimpressão de 1900), digitalização distribuída sob GPL pelo getBible (fonte: [manuscript4u](https://sites.google.com/site/manuscript4u/download)). O texto original é de domínio público.
+- **KJV**: módulo do [CrossWire Bible Society](https://gitlab.com/crosswire-bible-society/kjv), distribuído sob GPL com permissão de uso para qualquer fim. A KJV é de domínio público fora do Reino Unido.
+- **Fonte Lora**: SIL Open Font License.
 
 ---
 

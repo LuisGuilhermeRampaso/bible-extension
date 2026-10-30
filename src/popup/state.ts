@@ -6,10 +6,9 @@ export type Preferences = {
   fontSizeLevel: 1 | 2 | 3;
 };
 
-export const DEFAULT_PREFERENCES: Preferences = {
-  darkMode: true,
-  fontSizeLevel: 2,
-};
+function systemPrefersDark(): boolean {
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? true;
+}
 
 export const DEFAULT_ROUTE_STATE: RouteState = {
   view: 'books',
@@ -18,7 +17,6 @@ export const DEFAULT_ROUTE_STATE: RouteState = {
 
 const ROUTE_KEY = 'state.route';
 const PREFS_KEY = 'state.prefs';
-const TOKEN_KEY = 'settings.apiToken';
 
 export async function loadRouteState(): Promise<RouteState> {
   const saved = await settingsGet<RouteState>(ROUTE_KEY);
@@ -30,23 +28,13 @@ export async function saveRouteState(state: RouteState): Promise<void> {
 }
 
 export async function loadPreferences(): Promise<Preferences> {
-  const saved = await settingsGet<Preferences>(PREFS_KEY);
-  const prefs = saved ? { ...DEFAULT_PREFERENCES, ...saved } : DEFAULT_PREFERENCES;
+  const saved = await settingsGet<Partial<Preferences>>(PREFS_KEY);
   return {
-    darkMode: !!prefs.darkMode,
-    fontSizeLevel: prefs.fontSizeLevel === 1 || prefs.fontSizeLevel === 3 ? prefs.fontSizeLevel : 2,
+    darkMode: typeof saved?.darkMode === 'boolean' ? saved.darkMode : systemPrefersDark(),
+    fontSizeLevel: saved?.fontSizeLevel === 1 || saved?.fontSizeLevel === 3 ? saved.fontSizeLevel : 2,
   };
 }
 
 export async function savePreferences(prefs: Preferences): Promise<void> {
   await settingsSet<Preferences>(PREFS_KEY, prefs);
-}
-
-export async function loadApiToken(): Promise<string> {
-  const token = await settingsGet<string>(TOKEN_KEY);
-  return token ?? '';
-}
-
-export async function saveApiToken(token: string): Promise<void> {
-  await settingsSet<string>(TOKEN_KEY, token);
 }

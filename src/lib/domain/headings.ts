@@ -37,21 +37,12 @@ class HeadingsService {
 
   private async fetchHeadings(): Promise<void> {
     try {
-      console.log('Fetching headings from /headings_v1_pentateuco.json');
       const response = await fetch('/headings_v1_pentateuco.json');
-      console.log('Response status:', response.status);
       
       if (!response.ok) {
         throw new Error(`Failed to load headings: ${response.status}`);
       }
       this.headingsData = await response.json();
-      console.log('Headings loaded:', this.headingsData ? Object.keys(this.headingsData) : 'null');
-      
-      // Verificar se GEN existe nos dados
-      if (this.headingsData && this.headingsData['GEN']) {
-        console.log('GEN chapters:', Object.keys(this.headingsData['GEN']));
-        console.log('GEN 1:', this.headingsData['GEN']['1']);
-      }
     } catch (error) {
       console.error('Error loading headings:', error);
       this.headingsData = {};
@@ -90,11 +81,8 @@ class HeadingsService {
     const headings = this.getChapterHeadings(bookId, chapter, language);
     const result: Array<{ verse: number; title: string; isNewSection: boolean }> = [];
     
-    console.log('Processing headings for language:', language);
-    
     for (const heading of headings) {
       const title = heading.title[language] || heading.title['pt'] || heading.title['en'] || 'Sem título';
-      console.log('Heading:', heading, 'Title:', title);
       
       result.push({
         verse: heading.from,

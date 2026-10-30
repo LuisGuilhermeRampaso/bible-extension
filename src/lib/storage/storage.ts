@@ -73,8 +73,24 @@ export async function settingsGet<T>(key: string): Promise<T | undefined> {
 
 export async function settingsSet<T>(key: string, value: T): Promise<void> {
   if (!hasChromeStorage()) return;
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const c = (globalThis as unknown as { chrome: typeof chrome }).chrome;
-    c.storage.local.set({ [key]: value }, () => resolve());
+    c.storage.local.set({ [key]: value }, () => {
+      const error = c.runtime?.lastError;
+      if (error) reject(new Error(error.message));
+      else resolve();
+    });
+  });
+}
+
+export async function settingsRemove(key: string): Promise<void> {
+  if (!hasChromeStorage()) return;
+  return new Promise((resolve, reject) => {
+    const c = (globalThis as unknown as { chrome: typeof chrome }).chrome;
+    c.storage.local.remove(key, () => {
+      const error = c.runtime?.lastError;
+      if (error) reject(new Error(error.message));
+      else resolve();
+    });
   });
 }

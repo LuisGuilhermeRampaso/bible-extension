@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "fetch-bibles": "node scripts/fetch-bibles.mjs",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },

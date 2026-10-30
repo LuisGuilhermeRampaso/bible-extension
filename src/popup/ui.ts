@@ -1,3 +1,5 @@
+import { formatCopyPayload, type CopyInput } from '../lib/domain/reference';
+
 export function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   props: Partial<HTMLElementTagNameMap[K]> & { className?: string } = {},
@@ -15,10 +17,6 @@ export function el<K extends keyof HTMLElementTagNameMap>(
 
 export function clear(node: HTMLElement): void {
   while (node.firstChild) node.removeChild(node.firstChild);
-}
-
-export function formatRef(abbrev: string, chapter: number, verse: number, version: string): string {
-  return `${abbrev} ${chapter}:${verse} (${version.toUpperCase()})`;
 }
 
 export async function copyToClipboard(text: string): Promise<void> {
@@ -42,35 +40,15 @@ export async function copyToClipboard(text: string): Promise<void> {
   }
 }
 
-export type CopyVerseInput = {
-  book: string;
-  chapter: number;
-  verse: number;
-  text: string;
-  version: string;
-};
-
-function toTitleCaseId(id: string): string {
-  const cleaned = id.trim();
-  if (!cleaned) return id;
-  if (cleaned.length <= 3) return cleaned.toUpperCase();
-  return cleaned[0].toUpperCase() + cleaned.slice(1);
-}
-
-export function formatVerseCopyPayload(input: CopyVerseInput): string {
-  const verseText = input.text.trim();
-  const versionLabel = toTitleCaseId(input.version);
-  const ref = `${input.book} ${input.chapter}:${input.verse} (${versionLabel})`;
-  return `"${verseText}"\n${ref}`;
-}
-
-export async function copyVerse(input: CopyVerseInput): Promise<void> {
-  await copyToClipboard(formatVerseCopyPayload(input));
+export async function copyVerses(input: CopyInput): Promise<void> {
+  await copyToClipboard(formatCopyPayload(input));
 }
 
 export function showToast(message: string): void {
   const toast = el('div', { className: 'toast', textContent: message });
-  document.body.appendChild(toast);
+  toast.setAttribute('role', 'status');
+  const target = document.querySelector('.shell') ?? document.body;
+  target.appendChild(toast);
   setTimeout(() => toast.classList.add('show'), 10);
   setTimeout(() => toast.classList.remove('show'), 1600);
   setTimeout(() => toast.remove(), 2000);

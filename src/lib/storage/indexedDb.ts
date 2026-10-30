@@ -8,8 +8,10 @@ const DB_NAME = 'bible_extension';
 const DB_VERSION = 1;
 const STORE_NAME = 'cache';
 
+let dbPromise: Promise<IDBDatabase> | undefined;
+
 function openDb(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
+  dbPromise ??= new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
 
     req.onupgradeneeded = () => {
@@ -20,8 +22,12 @@ function openDb(): Promise<IDBDatabase> {
     };
 
     req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
+    req.onerror = () => {
+      dbPromise = undefined;
+      reject(req.error);
+    };
   });
+  return dbPromise;
 }
 
 export async function idbGet<T>(key: string): Promise<CacheRecord<T> | undefined> {
@@ -44,18 +50,6 @@ export async function idbSet<T>(key: string, value: T): Promise<void> {
     const tx = db.transaction(STORE_NAME, 'readwrite');
     const store = tx.objectStore(STORE_NAME);
     const req = store.put(record);
-
-    req.onsuccess = () => resolve();
-    req.onerror = () => reject(req.error);
-  });
-}
-
-export async function idbDelete(key: string): Promise<void> {
-  const db = await openDb();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.delete(key);
 
     req.onsuccess = () => resolve();
     req.onerror = () => reject(req.error);
