@@ -1,6 +1,5 @@
 node_modules/
 dist/
-dist.zip
 *.local
 .env
 .env.*
@@ -8,3 +7,4 @@ dist.zip
 .claude/
 .mcp.json
 skills-lock.json
+*.zip

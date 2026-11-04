@@ -4,10 +4,21 @@ import { BibleApiClient } from '../lib/api/BibleApiClient';
 import { VERSIONS } from '../lib/domain/versions';
 import { clear, el } from './ui';
 import { Router } from './router';
-import { loadRouteState, loadPreferences, savePreferences, saveRouteState, type Preferences } from './state';
+import {
+  loadPreferences,
+  loadReadingPosition,
+  loadRouteState,
+  savePreferences,
+  saveReadingPosition,
+  saveRouteState,
+  type Preferences,
+} from './state';
 import { renderBooksPage } from './pages/BooksPage';
 import { renderChaptersPage } from './pages/ChaptersPage';
 import { renderReaderPage } from './pages/ReaderPage';
+import { renderSearchPage } from './pages/SearchPage';
+import { getBookName, getLangByVersion } from '../lib/domain/canon';
+import type { RouteState } from './router';
 
 const app = document.querySelector<HTMLDivElement>('#app');
 
@@ -32,6 +43,12 @@ const fontPlusBtn = el('button', { className: 'iconBtn', type: 'button' });
 fontPlusBtn.setAttribute('aria-label', 'Aumentar fonte');
 fontPlusBtn.innerHTML =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><text x="2" y="19" font-size="17" font-family="sans-serif" stroke="none" fill="currentColor">A</text><line x1="16" y1="10" x2="22" y2="10"/><line x1="19" y1="7" x2="19" y2="13"/></svg>';
+
+const searchBtn = el('button', { className: 'iconBtn', type: 'button' });
+searchBtn.setAttribute('aria-label', 'Buscar na Bíblia (atalho: /)');
+searchBtn.title = 'Buscar na Bíblia (/)';
+searchBtn.innerHTML =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>';
 
 const themeBtn = el('button', { className: 'iconBtn', type: 'button' });
 themeBtn.setAttribute('aria-label', 'Alternar modo escuro');
@@ -66,6 +83,7 @@ window.addEventListener('online', () => { offlineBadge.hidden = true; });
 window.addEventListener('offline', () => { offlineBadge.hidden = false; });
 
 topbar.appendChild(brand);
+topbar.appendChild(searchBtn);
 topbar.appendChild(offlineBadge);
 controls.appendChild(fontMinusBtn);
 controls.appendChild(fontPlusBtn);
@@ -102,7 +120,11 @@ function renderVersions(selected: string): void {
 
 async function main(): Promise<void> {
   setLoading(true);
-  const [routeState, prefs] = await Promise.all([loadRouteState(), loadPreferences()]);
+  const [routeState, prefs, savedPosition] = await Promise.all([
+    loadRouteState(),
+    loadPreferences(),
+    loadReadingPosition(),
+  ]);
 
   document.documentElement.dataset.theme = prefs.darkMode ? 'dark' : 'light';
   document.documentElement.dataset.font = String(prefs.fontSizeLevel);
@@ -155,10 +177,77 @@ async function main(): Promise<void> {
     router.patch({ version: versionSelect.value });
   });
 
+  // Where "back" goes when search is closed; search itself is never stored as a destination.
+  let beforeSearch: RouteState | undefined;
+
+  function openSearch(): void {
+    const current = router.getState();
+    if (current.view === 'search') return;
+    router.setState({ view: 'search', version: current.version });
+  }
+
+  function closeSearch(): void {
+    const version = router.getState().version;
+    router.setState(beforeSearch ? { ...beforeSearch, version } : { view: 'books', version });
+  }
+
+  searchBtn.addEventListener('click', openSearch);
+
+  document.addEventListener('keydown', (ev) => {
+    const typing = ev.target instanceof Element && ev.target.matches('input, textarea, select, [contenteditable]');
+    if (ev.key === '/' && !typing && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
+      ev.preventDefault();
+      openSearch();
+    } else if (ev.key === 'Escape' && router.getState().view === 'search') {
+      closeSearch();
+    }
+  });
+
+  // Remember the first visible verse so reopening the popup lands where reading stopped.
+  function firstVisibleVerse(): number | undefined {
+    if (content.scrollTop < 40) return undefined;
+    const top = content.getBoundingClientRect().top;
+    for (const row of content.querySelectorAll<HTMLElement>('.verseRow[id^="v-"]')) {
+      if (row.getBoundingClientRect().bottom > top + 8) return Number(row.id.slice(2));
+    }
+    return undefined;
+  }
+
+  function persistPosition(): void {
+    const current = router.getState();
+    if (current.view !== 'reader' || !current.bookAbbrev || current.chapter === undefined) return;
+    const verse = firstVisibleVerse();
+    saveReadingPosition(
+      verse === undefined
+        ? undefined
+        : { version: current.version, bookAbbrev: current.bookAbbrev, chapter: current.chapter, verse },
+    ).catch(() => undefined);
+  }
+
+  let positionTimer: number | undefined;
+  content.addEventListener('scroll', () => {
+    window.clearTimeout(positionTimer);
+    positionTimer = window.setTimeout(persistPosition, 200);
+  });
+  function flushPosition(): void {
+    window.clearTimeout(positionTimer);
+    persistPosition();
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flushPosition();
+  });
+  window.addEventListener('pagehide', flushPosition);
+
+  // Only the render that opens the popup restores a position; later navigation starts at the top.
+  let pendingPosition = savedPosition;
+
   let renderToken = 0;
 
   router.subscribe(async (state) => {
     const token = ++renderToken;
+    if (state.view !== 'search') beforeSearch = state;
+    const restoring = pendingPosition;
+    pendingPosition = undefined;
     saveRouteState(state).catch(() => undefined);
     if (versionSelect.value !== state.version) {
       versionSelect.value = state.version;
@@ -174,6 +263,32 @@ async function main(): Promise<void> {
     // user navigated away writes into a detached node instead of the new page.
     const page = el('div', { className: 'page' });
     content.appendChild(page);
+
+    if (state.view === 'search') {
+      renderSearchPage(
+        page,
+        api,
+        state.version,
+        closeSearch,
+        (bookId, chapter, verse) =>
+          router.setState({
+            view: 'reader',
+            version: state.version,
+            bookAbbrev: bookId,
+            bookName: getBookName(bookId, getLangByVersion(state.version)),
+            chapter,
+            highlightVerse: verse,
+          }),
+        (bookId) =>
+          router.setState({
+            view: 'chapters',
+            version: state.version,
+            bookAbbrev: bookId,
+            bookName: getBookName(bookId, getLangByVersion(state.version)),
+          }),
+      );
+      return;
+    }
 
     if (state.view === 'books') {
       await renderBooksPage(page, api, state.version, (bookId, bookName) => {
@@ -208,10 +323,18 @@ async function main(): Promise<void> {
         state.version,
         state.bookAbbrev,
         state.chapter,
-        () => router.setState({ ...state, view: 'chapters' }),
-        (chapter: number) => router.setState({ ...state, chapter }),
-        (bookId: string, bookName: string, chapter = 1) => router.setState({ ...state, bookAbbrev: bookId, bookName, chapter }),
-        () => router.setState({ ...state, view: 'books', bookAbbrev: undefined, bookName: undefined, chapter: undefined }),
+        () => router.setState({ ...state, view: 'chapters', highlightVerse: undefined }),
+        (chapter: number) => router.setState({ ...state, chapter, highlightVerse: undefined }),
+        (bookId: string, bookName: string, chapter = 1) =>
+          router.setState({ ...state, bookAbbrev: bookId, bookName, chapter, highlightVerse: undefined }),
+        () => router.setState({ ...state, view: 'books', bookAbbrev: undefined, bookName: undefined, chapter: undefined, highlightVerse: undefined }),
+        state.highlightVerse,
+        restoring &&
+          restoring.version === state.version &&
+          restoring.bookAbbrev === state.bookAbbrev &&
+          restoring.chapter === state.chapter
+          ? restoring.verse
+          : undefined,
       );
       return;
     }

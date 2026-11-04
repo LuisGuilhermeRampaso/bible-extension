@@ -373,6 +373,83 @@ html, body {
   color: var(--muted);
 }
 
+/* ── Global search ─────────────────────────────────────── */
+.searchContainerWide {
+  max-width: none;
+}
+
+.searchStatus {
+  min-height: 1.2em;
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.searchResults {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.searchResult {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--fg);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.searchResult:hover {
+  border-color: var(--accent);
+}
+
+.searchResult:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  outline-offset: 2px;
+}
+
+.searchGoto {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+}
+
+.searchRef {
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.searchText {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.searchText mark {
+  background: var(--accent-dim);
+  color: var(--fg);
+  border-radius: 3px;
+  padding: 0 1px;
+  font-weight: 600;
+}
+
+.verseRow.flash {
+  animation: verseFlash 2.4s ease-out;
+}
+
+@keyframes verseFlash {
+  from { background: var(--accent-dim); }
+  to   { background: transparent; }
+}
+
 .booksMainContainer {
   display: flex;
   flex-direction: column;
@@ -951,6 +1028,11 @@ html, body {
 }
 
 .appFooter:hover { color: var(--fg); }
+
+.appCredits {
+  margin-top: 6px;
+  font-size: 0.72rem;
+}
 
 /* ── Reduced motion ────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {

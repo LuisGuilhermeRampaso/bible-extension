@@ -9,6 +9,7 @@ import { LocalBibleSource } from './LocalBibleSource';
 import { cacheGet, cacheSet } from '../storage/storage';
 import { BOOK_ORDER, CHAPTER_COUNTS } from '../domain/canon';
 import { VERSIONS } from '../domain/versions';
+import { buildCorpus, type SearchCorpus } from '../domain/search';
 
 export type BibleApiClientOptions = {
   baseUrl?: string;
@@ -24,6 +25,7 @@ export class BibleApiClient {
   private static readonly GET_BIBLE_IDS = new Set(['livre', 'livretr']);
 
   private readonly local = new LocalBibleSource();
+  private readonly corpora = new Map<string, Promise<SearchCorpus>>();
 
   constructor(options: BibleApiClientOptions = {}) {
     this.baseUrl = options.baseUrl ?? 'https://bible-api.com';
@@ -54,6 +56,23 @@ export class BibleApiClient {
       language_code: version?.language ?? '',
       license: version?.license ?? '',
     };
+  }
+
+  /** Whole-Bible text for word search. Only bundled versions have one (it needs no network). */
+  getSearchCorpus(translationId: string): Promise<SearchCorpus> {
+    if (!this.local.isBundled(translationId)) {
+      return Promise.reject(new Error(`Search unavailable for ${translationId}`));
+    }
+
+    let pending = this.corpora.get(translationId);
+    if (!pending) {
+      pending = Promise.all(
+        BOOK_ORDER.map(async (id) => ({ id, chapters: await this.local.loadBook(translationId, id) })),
+      ).then(buildCorpus);
+      pending.catch(() => this.corpora.delete(translationId));
+      this.corpora.set(translationId, pending);
+    }
+    return pending;
   }
 
   async getBooks(translationId: string): Promise<BooksResponse> {

@@ -1,4 +1,4 @@
-export type View = 'books' | 'chapters' | 'reader';
+export type View = 'books' | 'chapters' | 'reader' | 'search';
 
 export type RouteState = {
   view: View;

@@ -1,4 +1,4 @@
-import { settingsGet, settingsSet } from '../lib/storage/storage';
+import { settingsGet, settingsRemove, settingsSet } from '../lib/storage/storage';
 import type { RouteState } from './router';
 
 export type Preferences = {
@@ -17,6 +17,7 @@ export const DEFAULT_ROUTE_STATE: RouteState = {
 
 const ROUTE_KEY = 'state.route';
 const PREFS_KEY = 'state.prefs';
+const POSITION_KEY = 'state.position';
 
 export async function loadRouteState(): Promise<RouteState> {
   const saved = await settingsGet<RouteState>(ROUTE_KEY);
@@ -24,7 +25,9 @@ export async function loadRouteState(): Promise<RouteState> {
 }
 
 export async function saveRouteState(state: RouteState): Promise<void> {
-  await settingsSet<RouteState>(ROUTE_KEY, state);
+  // Search is a transient overlay and highlightVerse a one-shot: neither should be restored on reopen.
+  if (state.view === 'search') return;
+  await settingsSet<RouteState>(ROUTE_KEY, { ...state, highlightVerse: undefined });
 }
 
 export async function loadPreferences(): Promise<Preferences> {
@@ -37,4 +40,21 @@ export async function loadPreferences(): Promise<Preferences> {
 
 export async function savePreferences(prefs: Preferences): Promise<void> {
   await settingsSet<Preferences>(PREFS_KEY, prefs);
+}
+
+/** Where the reader was scrolled to: the first verse visible in a chapter. */
+export type ReadingPosition = {
+  version: string;
+  bookAbbrev: string;
+  chapter: number;
+  verse: number;
+};
+
+export async function loadReadingPosition(): Promise<ReadingPosition | undefined> {
+  return settingsGet<ReadingPosition>(POSITION_KEY);
+}
+
+export async function saveReadingPosition(position: ReadingPosition | undefined): Promise<void> {
+  if (position) await settingsSet<ReadingPosition>(POSITION_KEY, position);
+  else await settingsRemove(POSITION_KEY);
 }

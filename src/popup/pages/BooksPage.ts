@@ -67,6 +67,13 @@ export async function renderBooksPage(
   root.appendChild(mainContainer);
 
   const footer = el('div', { className: 'appFooter', textContent: 'Desenvolvida por Luis Guilherme Rampaso®' });
+  // CC BY 3.0 BR requires crediting the Bíblia Livre; the other texts are credited for transparency.
+  footer.appendChild(
+    el('div', {
+      className: 'appCredits',
+      textContent: 'Textos: Almeida (1911), Bíblia Livre (CC BY 3.0 BR) e King James Version.',
+    }),
+  );
   root.appendChild(footer);
 
   function renderSkeleton(): void {

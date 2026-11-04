@@ -42,6 +42,8 @@ export async function renderReaderPage(
   onNavigateToChapter?: (chapter: number) => void,
   onNavigateToBook?: (bookId: string, bookName: string, chapter?: number) => void,
   onNavigateToBooks?: () => void,
+  highlightVerse?: number,
+  restoreVerse?: number,
 ): Promise<void> {
   const languageCode = getLangByVersion(version);
   const versionLabel = getVersionShortLabel(version);
@@ -440,6 +442,20 @@ export async function renderReaderPage(
     }
 
     setToolbarVisible();
+
+    // Coming from search: bring the verse into view and mark it.
+    if (highlightVerse !== undefined) {
+      const target = container.querySelector<HTMLElement>(`#v-${highlightVerse}`);
+      if (target) {
+        focusedVerse = highlightVerse;
+        applyFocusedVisual();
+        target.classList.add('flash');
+        target.scrollIntoView({ block: 'center' });
+      }
+    } else if (restoreVerse !== undefined) {
+      // Reopened where the reader left off: put that verse back at the top, no highlight.
+      container.querySelector<HTMLElement>(`#v-${restoreVerse}`)?.scrollIntoView({ block: 'start', behavior: 'instant' });
+    }
   }
 
   await load();
