@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#232226"/>
+      <stop offset="1" stop-color="#0d0d0f"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#efd58a"/>
+      <stop offset="0.55" stop-color="#d1ae4f"/>
+      <stop offset="1" stop-color="#a97f22"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background tile -->
+  <rect x="2" y="2" width="124" height="124" rx="28" fill="url(#bg)"/>
+  <rect x="3.5" y="3.5" width="121" height="121" rx="26.5" fill="none" stroke="#c9a84c" stroke-opacity="0.35" stroke-width="1.5"/>
+
+  <!-- page block (thickness of the closed book) -->
+  <rect x="34" y="30" width="64" height="82" rx="7" fill="#efe6cf"/>
+  <rect x="34" y="106" width="64" height="2" fill="#cdbf98"/>
+
+  <!-- cover -->
+  <rect x="30" y="20" width="64" height="86" rx="8" fill="url(#gold)"/>
+  <!-- spine -->
+  <path d="M38 20h-0a8 8 0 0 0-8 8v70a8 8 0 0 0 8 8h2V20z" fill="#7f5d14" fill-opacity="0.55"/>
+  <rect x="40" y="20" width="1.6" height="86" fill="#fff" fill-opacity="0.22"/>
+
+  <!-- cross -->
+  <rect x="62" y="34" width="9" height="48" rx="2.2" fill="#17130a"/>
+  <rect x="49" y="46" width="35" height="9" rx="2.2" fill="#17130a"/>
+
+  <!-- bookmark ribbon -->
+  <path d="M80 106h12v20l-6-5-6 5z" fill="#b7312c"/>
+  <path d="M80 106h12v3H80z" fill="#8c2420"/>
+</svg>

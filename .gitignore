@@ -8,3 +8,4 @@ dist/
 .mcp.json
 skills-lock.json
 *.zip
+store/out/work/

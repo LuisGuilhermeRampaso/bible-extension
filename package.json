@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "fetch-bibles": "node scripts/fetch-bibles.mjs",
+    "store-assets": "node store/build.mjs",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
